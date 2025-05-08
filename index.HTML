@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sitio web de  Canciones</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <h1> Canciones</h1>
+
+ 
+  <div id="form-container">
+    <h2 id="form-title">Agregar Canción</h2>
+    <form id="form">
+      <input type="hidden" id="editIndex" />
+      <input id="title" placeholder="Título de la canción" required />
+      <input id="artist" placeholder="Artista" required />
+      <input id="duration" placeholder="Duración (minutos)" type="number" step="0.1" required />
+      <button type="submit">Guardar</button>
+    </form>
+  </div>
+
+  
+  <div id="list-container">
+    <h2>Canciones Registradas</h2>
+    <ul id="list"></ul>
+  </div>
+
+  <script>
+    const form = document.getElementById('form');
+    const titleInput = document.getElementById('title');
+    const artistInput = document.getElementById('artist');
+    const durationInput = document.getElementById('duration');
+    const list = document.getElementById('list');
+    const editIndex = document.getElementById('editIndex');
+    const formTitle = document.getElementById('form-title');
+
+    
+    function getData() {
+      return JSON.parse(localStorage.getItem('songs') || '[]');
+    }
+
+    
+    function setData(data) {
+      localStorage.setItem('songs', JSON.stringify(data));
+    }
+
+   
+    function renderList() {
+      const data = getData();
+      list.innerHTML = '';
+      data.forEach((song, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <strong>${song.title}</strong> - ${song.artist} (${song.duration} min)
+          <button onclick="view(${i})">Ver</button>
+          <button onclick="edit(${i})">Editar</button>
+          <button onclick="remove(${i})">Eliminar</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    
+    form.onsubmit = (e) => {
+      e.preventDefault();
+
+      const title = titleInput.value;
+      const artist = artistInput.value;
+      const duration = parseFloat(durationInput.value);
+      const index = editIndex.value;
+
+      const data = getData();
+      const newSong = { title, artist, duration };
+
+      if (index === '') {
+       
+        data.push(newSong);
+      } else {
+        
+        data[index] = newSong;
+        editIndex.value = ''; 
+      }
+
+      setData(data);
+      form.reset(); 
+      renderList();
+    };
+
+   
+    function view(index) {
+      const data = getData();
+      const song = data[index];
+      alert(`Título: ${song.title}\nArtista: ${song.artist}\nDuración: ${song.duration} minutos`);
+    }
+
+    
+    function edit(index) {
+      const data = getData();
+      const song = data[index];
+      titleInput.value = song.title;
+      artistInput.value = song.artist;
+      durationInput.value = song.duration;
+      editIndex.value = index;
+      formTitle.textContent = 'Editar Canción'; 
+    }
+
+   
+    function remove(index) {
+      if (confirm('¿Seguro que deseas eliminar esta canción?')) {
+        const data = getData();
+        data.splice(index, 1);
+        setData(data);
+        renderList();
+      }
+    }
+
+    
+    renderList();
+  </script>
+
+</body>
+</html>
