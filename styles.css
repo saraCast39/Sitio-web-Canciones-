@@ -33,14 +33,14 @@ h2 {
 
 #form-container form button {
   cursor: pointer;
-  background-color: #4CAF50;
+  background-color: #f44336;
   color: white;
   border: none;
   transition: background-color 0.3s ease;
 }
 
 #form-container form button:hover {
-  background-color: #45a049;
+  background-color: #f44336;
 }
 
 #list-container {
